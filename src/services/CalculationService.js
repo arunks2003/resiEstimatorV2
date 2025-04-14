@@ -32,7 +32,7 @@ export const getBHKType = (areaSqFt) => {
 };
 
 export const calculateMaterials = (formData) => {
-  const { bhk, area, price, quality } = formData;
+  const { bhk, area, price, quality, location } = formData;
 
   // Calculate total construction area (simplified)
   const totalArea = area * 0.8; // Assuming 80% of plot is built
@@ -40,11 +40,18 @@ export const calculateMaterials = (formData) => {
 
   // Quality multipliers
   const qualityMultipliers = {
-    economy: 0.9,
-    standard: 1.0,
-    luxury: 1.53,
+    economy: 1.3,
+    standard: 2.0,
+    luxury: 2.53,
   };
-  const qualityFactor = qualityMultipliers[quality] || 1.0;
+  const locationMultiplier = {
+    urban: 2.2,
+    suburban: 1.5,
+    rural: 0.6,
+  };
+  const qualityFactor =
+    qualityMultipliers[quality] * locationMultiplier[location] ||
+    locationMultiplier[location] * 1.0;
 
   const materials = [
     {

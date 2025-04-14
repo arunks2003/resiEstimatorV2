@@ -16,6 +16,8 @@ const SavedEstimates = ({ step, setStep, flag, setFlag }) => {
             setSelectedEstimate(JSON.parse(saved));
             setSavedEstimates([JSON.parse(saved)]); // For multiple estimates, you'd need to modify storage
         }
+        setStep(1);
+        setFlag(false)
     }, []);
 
     const handleClearAll = () => {

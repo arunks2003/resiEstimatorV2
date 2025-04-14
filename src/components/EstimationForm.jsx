@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getBHKType } from '../services/CalculationService';
 
 const EstimationForm = ({ onCalculate, step, setStep, flag, setFlag }) => {
@@ -38,6 +38,9 @@ const EstimationForm = ({ onCalculate, step, setStep, flag, setFlag }) => {
         onCalculate(formData);
         setFlag(true);
     };
+    useEffect(() => {
+        onCalculate(formData);
+    }, [formData])
 
     // Step 1: Area Input
     if (step === 1) {
