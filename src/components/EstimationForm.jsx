@@ -75,7 +75,7 @@ const EstimationForm = ({ onCalculate, step, setStep, flag, setFlag }) => {
                         className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         disabled={!formData.area}
                     >
-                        Next: Select BHK
+                        Next
                     </button>
                 </div>
             </form>
@@ -140,13 +140,13 @@ const EstimationForm = ({ onCalculate, step, setStep, flag, setFlag }) => {
                             {formData.bhk} BHK • {formData.area} sq. ft.
                         </p>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => setStep(2)}
                         className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
                     >
                         Change
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
