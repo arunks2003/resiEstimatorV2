@@ -1,8 +1,10 @@
 import React from 'react';
 import ResultsTable from './ResultsTable';
 import MaterialsPieChart from './MaterialsPieChart';
+import GanttChart from './GanttChart';
 
 const ResultsDisplay = ({ data }) => {
+    console.log("Data", data)
     return (
         <div className="space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -66,6 +68,7 @@ const ResultsDisplay = ({ data }) => {
             </div>
 
             <ResultsTable data={data} />
+            <GanttChart bhk={data.bhk} area={data.area}></GanttChart>
 
             <div className="bg-indigo-50 rounded-lg p-6">
                 <div className="flex items-center">
