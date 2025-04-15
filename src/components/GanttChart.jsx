@@ -1,26 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-export default function GanttChart() {
-    const [phases] = useState([
-        { name: 'Home Design & Approval', days: 45, cost: 75000 },
-        { name: 'Excavation', days: 30, cost: 45000 },
-        { name: 'Footing & Foundation', days: 60, cost: 150000 },
-        { name: 'RCC Work - Columns & Slabs', days: 75, cost: 195000 },
-        { name: 'Roof Slab', days: 60, cost: 180000 },
-        { name: 'Brickwork and Plastering', days: 45, cost: 90000 },
-        { name: 'Flooring & Tiling', days: 60, cost: 150000 },
-        { name: 'Electric Wiring', days: 30, cost: 120000 },
-        { name: 'Water Supply & Plumbing', days: 30, cost: 150000 },
-        { name: 'Door', days: 15, cost: 75000 }
-    ]);
+export default function GanttChart({ bhk, area }) {
+    const [phases, setPhases] = useState([]);
+
+    useEffect(() => {
+        if (bhk && area) {
+            const costPerSqFt = 1000;
+            const baseCost = area * costPerSqFt;
+
+            const calculatedPhases = [
+                { name: 'Home Design & Approval', days: Math.max(15, Math.floor(area * 0.03)), cost: baseCost * 0.05 },
+                { name: 'Excavation', days: Math.max(10, Math.floor(area * 0.015)), cost: baseCost * 0.03 },
+                { name: 'Footing & Foundation', days: Math.max(20, Math.floor(area * 0.04)), cost: baseCost * 0.1 },
+                { name: 'RCC Work - Columns & Slabs', days: Math.max(25, Math.floor(area * 0.05)), cost: baseCost * 0.13 },
+                { name: 'Roof Slab', days: Math.max(20, Math.floor(area * 0.04)), cost: baseCost * 0.12 },
+                { name: 'Brickwork and Plastering', days: Math.max(15, Math.floor(area * 0.03)), cost: baseCost * 0.06 },
+                { name: 'Flooring & Tiling', days: Math.max(20, Math.floor(area * 0.04)), cost: baseCost * 0.1 },
+                { name: 'Electric Wiring', days: Math.max(10, Math.floor(area * 0.02)), cost: baseCost * 0.03 },
+                { name: 'Water Supply & Plumbing', days: Math.max(10, Math.floor(area * 0.02)), cost: baseCost * 0.08 },
+                { name: 'Door', days: Math.max(10, Math.floor(area * 0.02)), cost: baseCost * 0.1 },
+            ];
+
+            setPhases(calculatedPhases);
+        }
+    }, [bhk, area]);
 
     const totalDays = phases.reduce((sum, p) => sum + p.days, 0);
-    const maxDays = Math.ceil(totalDays / 100) * 100; // Round to nearest 100
+    const maxDays = Math.ceil(totalDays / 100) * 100;
 
     return (
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 w-full overflow-x-auto">
-            <div className="min-w-[700px]"> {/* Minimum width to prevent squeezing */}
+            <div className="min-w-[700px]">
                 <h2 className="text-2xl font-bold text-gray-800 mb-1">Construction Timeline</h2>
                 <p className="text-gray-600 mb-6 text-sm">
                     <span className="bg-purple-100 px-3 py-1 rounded-full">
@@ -29,18 +40,23 @@ export default function GanttChart() {
                 </p>
 
                 <div className="relative">
-                    {/* Fixed Timeline axis */}
+                    {/* Timeline axis */}
                     <div className="flex mb-2 ml-[180px] h-6 relative">
                         <div className="absolute left-0 right-0 top-3 h-px bg-gray-300"></div>
                         {Array.from({ length: maxDays / 50 + 1 }).map((_, i) => {
                             const position = i * 50;
+                            const percentage = (position / maxDays) * 100;
+                            const adjustedLeft = Math.max(0, Math.min(percentage, 100));
+
                             return (
                                 <div
                                     key={i}
                                     className="absolute"
                                     style={{
-                                        left: `calc(${(position / maxDays) * 100}% - 12px)`,
-                                        zIndex: 10
+                                        left: `${adjustedLeft}%`,
+                                        transform: percentage === 0 ? 'translateX(0)' :
+                                            percentage === 100 ? 'translateX(-100%)' :
+                                                'translateX(-50%)'
                                     }}
                                 >
                                     <div className="w-px h-3 bg-gray-400 -ml-px"></div>
@@ -58,7 +74,7 @@ export default function GanttChart() {
                             const left = (phases.slice(0, index).reduce((sum, p) => sum + p.days, 0) / maxDays) * 100;
 
                             return (
-                                <div key={index} className="flex items-center h-10 relative group">
+                                <div key={index} className="flex items-center h-10 group relative">
                                     <div className="w-[180px] text-right pr-4 text-sm font-medium text-gray-700">
                                         {phase.name}
                                     </div>
@@ -66,19 +82,34 @@ export default function GanttChart() {
                                     <div className="flex-1 h-full bg-gray-50 rounded-lg relative overflow-hidden border border-gray-200">
                                         <motion.div
                                             initial={{ width: 0 }}
-                                            animate={{
-                                                width: `${width}%`,
-                                                left: `${left}%`
-                                            }}
+                                            animate={{ width: `${width}%`, left: `${left}%` }}
                                             transition={{ duration: 0.6, delay: index * 0.1 }}
-                                            className="absolute top-0 h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-lg z-0"
+                                            className="absolute top-0 h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-lg z-10"
+                                            whileHover={{
+                                                scaleY: 1.1,
+                                                zIndex: 20
+                                            }}
                                         >
-                                            {/* Visible Label */}
-                                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                                                <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-purple-800 shadow-sm border border-purple-200 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    {phase.days} Days | ₹{phase.cost.toLocaleString("en-IN")}
+                                            {/* Hover Tooltip - Now positioned above the bar */}
+                                            <motion.div
+                                                className="absolute left-1/2 -top-10 -translate-x-1/2 hidden group-hover:block z-30"
+                                                initial={{ opacity: 0, y: 5 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <div className="bg-white px-3 py-2 rounded-lg shadow-xl border border-gray-200 min-w-[180px]">
+                                                    <div className="text-sm font-semibold text-purple-800">{phase.name}</div>
+                                                    <div className="flex justify-between mt-1">
+                                                        <span className="text-xs text-gray-600">Duration:</span>
+                                                        <span className="text-xs font-medium">{phase.days} Days</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-xs text-gray-600">Cost:</span>
+                                                        <span className="text-xs font-medium">₹{Math.round(phase.cost).toLocaleString("en-IN")}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                <div className="w-3 h-3 bg-white rotate-45 absolute -bottom-1 left-1/2 -ml-1.5 border-r border-b border-gray-200 z-40"></div>
+                                            </motion.div>
                                         </motion.div>
                                     </div>
                                 </div>
