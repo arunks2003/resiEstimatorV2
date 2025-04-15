@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'; // You'll need to create this
 import About from './components/About';
 import Footer from './components/Footer.jsx';
 import SavedEstimates from './components/SavedEstimates.jsx';
+import Methodology from './components/Methodology.jsx';
 
 
 function App() {
@@ -59,7 +60,7 @@ function App() {
                 </>
               } />
               <Route path="/about" element={<About />} />
-
+              <Route path="/methodology" element={<Methodology />} />
               {/* <Route path="/about" element={<AboutPage />} /> */}
               <Route path="/saved" element={<SavedEstimates step={step} setStep={setStep} flag={flag} setFlag={setFlag} />} />
             </Routes>

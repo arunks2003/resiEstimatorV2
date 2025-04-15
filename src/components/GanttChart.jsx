@@ -72,6 +72,7 @@ export default function GanttChart({ bhk, area }) {
                         {phases.map((phase, index) => {
                             const width = (phase.days / maxDays) * 100;
                             const left = (phases.slice(0, index).reduce((sum, p) => sum + p.days, 0) / maxDays) * 100;
+                            const isNearRightEdge = (left + width) > 85; // Check if near right edge
 
                             return (
                                 <div key={index} className="flex items-center h-10 group relative">
@@ -90,25 +91,27 @@ export default function GanttChart({ bhk, area }) {
                                                 zIndex: 20
                                             }}
                                         >
-                                            {/* Hover Tooltip - Now positioned above the bar */}
+                                            {/* Dynamic Tooltip Positioning */}
                                             <motion.div
-                                                className="absolute left-1/2 -top-10 -translate-x-1/2 hidden group-hover:block z-30"
-                                                initial={{ opacity: 0, y: 5 }}
-                                                animate={{ opacity: 1, y: 0 }}
+                                                className={`absolute ${isNearRightEdge ? 'right-0 -translate-x-full' : 'left-full ml-2'} top-1/2 -translate-y-1/2 hidden group-hover:block z-30`}
+                                                initial={{ opacity: 0, x: isNearRightEdge ? 5 : -5 }}
+                                                animate={{ opacity: 1, x: 0 }}
                                                 transition={{ duration: 0.2 }}
                                             >
-                                                <div className="bg-white px-3 py-2 rounded-lg shadow-xl border border-gray-200 min-w-[180px]">
-                                                    <div className="text-sm font-semibold text-purple-800">{phase.name}</div>
-                                                    <div className="flex justify-between mt-1">
-                                                        <span className="text-xs text-gray-600">Duration:</span>
-                                                        <span className="text-xs font-medium">{phase.days} Days</span>
+                                                <div className="z-1">
+                                                    <div className="bg-white px-3 py-2 rounded-lg shadow-xl border border-gray-200 min-w-[180px]">
+                                                        {/* <div className="text-sm font-semibold text-purple-800">{phase.name}</div> */}
+                                                        <div className="flex justify-between mt-1">
+                                                            <span className="text-xs text-gray-600">Duration:</span>
+                                                            <span className="text-xs font-medium">{phase.days} Days</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-xs text-gray-600">Cost:</span>
+                                                            <span className="text-xs font-medium">₹{Math.round(phase.cost).toLocaleString("en-IN")}</span>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-xs text-gray-600">Cost:</span>
-                                                        <span className="text-xs font-medium">₹{Math.round(phase.cost).toLocaleString("en-IN")}</span>
-                                                    </div>
+                                                    <div className={`w-3 h-3 bg-white rotate-45 absolute ${isNearRightEdge ? '-right-1' : '-left-1'} top-1/2 -mt-1.5 ${isNearRightEdge ? 'border-l border-t' : 'border-r border-b'} border-gray-200 z-40`}></div>
                                                 </div>
-                                                <div className="w-3 h-3 bg-white rotate-45 absolute -bottom-1 left-1/2 -ml-1.5 border-r border-b border-gray-200 z-40"></div>
                                             </motion.div>
                                         </motion.div>
                                     </div>
